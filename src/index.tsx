@@ -1,8 +1,13 @@
 
+import {
+  StyleSheet,
+  Text
+} from 'react-native';
+
+//import WebView from 'react-native-webview';
 
 
-
-    export const v2plugin = ( props: {
+    export const hostedplugin = ( props: {
       data: string | null | undefined   }) =>
    {
     const varcurrency = 'SAR';
@@ -13,4 +18,25 @@
     console.log(varcurrency);
     console.log('SA');
     console.log(amount);
+
+  
+
+    return (
+      <Text
+       
+        style={styles.webview}
+      >
+        In Plugin Data
+        </Text>
+    );
 }
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  webview: {
+    flex: 1,
+  },
+});
