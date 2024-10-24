@@ -1,22 +1,16 @@
-import { NativeModules, Platform } from 'react-native';
 
-const LINKING_ERROR =
-  `The package 'react-native-vegaah-lib' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
 
-const VegaahLib = NativeModules.VegaahLib
-  ? NativeModules.VegaahLib
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return VegaahLib.multiply(a, b);
+
+    export const v2plugin = ( props: {
+      data: string | null | undefined   }) =>
+   {
+    const varcurrency = 'SAR';
+    const amount = '1';
+    const reqparams:any  = (props.data);
+    const requestdata :any =JSON.parse(reqparams);
+    console.log("In ELSE of Apple pay "+ JSON.stringify(requestdata));
+    console.log(varcurrency);
+    console.log('SA');
+    console.log(amount);
 }
