@@ -1,7 +1,7 @@
 
 import {
   StyleSheet,
-  Text
+  Text,View
 } from 'react-native';
 
 //import WebView from 'react-native-webview';
@@ -22,12 +22,9 @@ import {
   
 
     return (
-      <Text
-       
-        style={styles.webview}
-      >
-        In Plugin Data
-        </Text>
+      <View style={styles.loadingContainer}>
+        <Text>Hello from MyComponent!</Text>
+      </View>
     );
 }
 const styles = StyleSheet.create({
