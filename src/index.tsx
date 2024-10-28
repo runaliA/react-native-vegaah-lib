@@ -8,7 +8,7 @@ import WebView from 'react-native-webview';
 
 
 
-    export const HostedPlugin  : React.FC<{ data: string | null | undefined }> = ({ data }) => {
+    export const HostedPlugin  : React.FC<{ data: string | null | undefined }> = async ({ data }) => {
        
  
     const varcurrency = 'SAR';
@@ -21,6 +21,44 @@ import WebView from 'react-native-webview';
     console.log(varcurrency);
     console.log('SA');
     console.log(amount);
+    const paymentRequest = 
+    {
+  
+      terminalId: "TejasMPGS",
+      paymentType: '1',
+      merchantIp: '10.10.10.10',
+      password: "Password@123",
+      amount: "10.00",
+      signature: "caa93ce1e3896342d156fdb9aacdc79b3ca2422e3c2ac6c82c60c9245ba70d48",
+      country: 'SA',
+      currency: 'SAR',
+      customerIp: '10.10.10.10',
+      applepayId: 'applepay',
+      order: {
+        "orderId": "M11",
+        "description": "Purchase of product XYZ"
+    },
+      
+      
+    };
+    try {
+      const response = await fetch("http://10.10.11.66:7070/vegaahpayments/v2/payments/pay-request", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(paymentRequest)
+      });
+      const result = await response.json();
+      console.log(result);
+     
+      console.log("In Apple Pay Token" + result);
+    } catch (e) {
+     console.log('Something went wrong while sending the request');
+    }
+
+
 
     return (
      
@@ -53,7 +91,6 @@ const styles = StyleSheet.create({
   btnContainer:
    {
     flex : 1,
-    justifyContent : 'center',
-    alignContent : 'center'
+   
    }
 });
