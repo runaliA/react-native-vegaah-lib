@@ -70,7 +70,7 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
           description: "Purchase of product XYZ"
         }
       };
-let requrl = requestdata.requestUrl
+let requrl = "https://test-vegaah.concertosoft.com/vegaahpayments/v2/payments/pay-request"
       try {
         const response = await fetch(requrl, {
           method: 'POST',
@@ -135,8 +135,12 @@ useEffect(() => {
       </View>
      {showWebView && ( <View style={styles.btnContainer}>
         <WebView
+        originWhitelist={['*']} 
           source={{ uri: strpaymenturl }}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
           style={{ flex: 1 }}
+          
           onLoadStart={() => console.log('WebView load started')}
           onError={(syntheticEvent) => {
             const { nativeEvent } = syntheticEvent;
@@ -184,7 +188,7 @@ useEffect(() => {
 
             // let data123 =
             // 'StWTroAjr/0PZYMM1bDoFn60i833Xws27bNws++fjZbbw+Yf/7xpF8HqA3t1BxqOoOD/HSYTvpxqrE59NPE1fB6E1lNo8GTaLX4x+u2YVrcH7VeQ0/jObUtAKI67YVXikCcp64K+Ys+EllpYuha8/nMeLEbGjWDLT+a7jVIBr9SRFZkwUNGi8US3dRKLi9SK5oSuIRw4axokM+XiEcQx0cVrDM41HBcDR/5hX61mWTtcr5tmrHLl7UMptcfhUZwFf/5Z/G8iB7Ju5d5oN35vMc0Lf/3GZxTHpx5vMqRWfRyx7dYO21UXneIjwH41l8xEcTDEOPIGnvXmpC+V13IoqbZH/PNl5CEMtRsX7Mmri+XaMKw6Ic3YiJPsme9BRHkfyb46Qu151rDwbYfcuSwvpKxEX/XTJ/6cWc1nid+AgqgKCdiC1viRZKhOHef7+nH0NBkleAMX8eOdBhJc2JYTHoS9mxkinLsewPtyNuiYVUkItZa8B6ZXh1FTMLVnUe/Rw28uEbuLsIGm6i5v7l4THQBa/7j+AZGuz9PIH68/uPIGFsKOLKQeY4jwiYNknw+YH8aiIUvsbxt3Q30LFJseOmAU9zTjHHVjFW//pIVTkwyfenpa8uNyuoUwNGBQlcrBoxNGHSLPYR/pGmz3qtvAxF/ZCdz1xEHIFEownpt1YXvbS/ROfCP4E5ZO5h57PB05pfAXNnGGW8GguBtXiiywMIUMZ0nV32H2EtbQnGN93k7kJEI9L1v61h+24V/XrPdmzSzu3VlHPStgY/2H0vM6/rSRPHdX9C65+0tNzOfVaLOVbC7UJwWVVVB8Oo06r5ti1Cm9nZzWwiFqT80c75Lh0I05BhyrEHCPyslMndaMBBGgd/N+DtTTDrjK+qmRRFbs';
-             const secretKey = "74daa0244042a97d7d2fa207a976eca03a9275f15f42ff080603ac6f2b93d337";
+             const secretKey = "3b8babda62a62fecce0d3152868f2d3aced314033692da4346968d1b18eb7998";
               console.log("Merchant Data "+decodedString)
               const result = decryptAES256ECB(decodedString, secretKey);
               console.log("FINAL RESPONSE " + result);
