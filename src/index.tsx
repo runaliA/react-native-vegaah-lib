@@ -21,7 +21,7 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
   const [loading, setLoading] = useState(true);// To manage loading state
   const [showWebView, setShowWebView] = useState(true);
   const [strpaymenturl, setStrPaymentUrl] = useState("")
-  const [currentUrl, setCurrentUrl] = useState("");
+  //const [currentUrl, setCurrentUrl] = useState("");
  // const [reqHash , setreqHash ] = useState("")
   //console.log("DATA " + data);
   useEffect(() => {
@@ -131,7 +131,7 @@ useEffect(() => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.urlContainer}>
-        <Text>Current URL: {currentUrl}</Text>
+        
       </View>
      {showWebView && ( <View style={styles.btnContainer}>
         <WebView
@@ -139,8 +139,9 @@ useEffect(() => {
           source={{ uri: strpaymenturl }}
           javaScriptEnabled={true}
           domStorageEnabled={true}
+     
           style={{ flex: 1 }}
-          
+          mixedContentMode="always" 
           onLoadStart={() => console.log('WebView load started')}
           onError={(syntheticEvent) => {
             const { nativeEvent } = syntheticEvent;
@@ -148,7 +149,7 @@ useEffect(() => {
           }}
           onNavigationStateChange={(navState) => {
             
-            setCurrentUrl(navState.url); // Update the URL as it changes
+          //  setCurrentUrl(navState.url); // Update the URL as it changes
            // console.log("Navigated to:", navState.url); 
             if(navState.url.includes("?data"))
             {
@@ -229,7 +230,8 @@ const decryptAES256ECB = (ciphertext :  string , secretKey : any) => {
       });
 
     // Convert decrypted data to UTF-8
-    const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
+     // Convert decrypted data to UTF-8
+     const decryptedText = CryptoJS.enc.Utf8.stringify(decrypted);
     Alert.alert('Decryption TEXT', decryptedText);
     // Check if the decryption was successful
     if (!decryptedText) {
