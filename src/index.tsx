@@ -230,7 +230,6 @@ const decryptAES256ECB = (ciphertext :  string , secretKey : any) => {
       });
 
     // Convert decrypted data to UTF-8
-     // Convert decrypted data to UTF-8
      const decryptedText = CryptoJS.enc.Utf8.stringify(decrypted);
     Alert.alert('Decryption TEXT', decryptedText);
     // Check if the decryption was successful
