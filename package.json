@@ -190,6 +190,7 @@
   "dependencies": {
     "crypto-js": "^4.2.0",
     "query-string": "^9.1.1",
+    "react-native-device-info": "^14.0.2",
     "react-native-webview": "^13.12.3"
   }
 }
