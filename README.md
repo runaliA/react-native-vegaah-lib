@@ -11,13 +11,6 @@ npm install react-native-vegaah-lib
 ## Usage
 
 
-```js
-import { multiply } from 'react-native-vegaah-lib';
-
-// ...
-
-const result = await multiply(3, 7);
-```
 
 
 ## Contributing
