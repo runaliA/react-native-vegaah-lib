@@ -22,9 +22,7 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
   const [loading, setLoading] = useState(true);// To manage loading state
   const [showWebView, setShowWebView] = useState(true);
   const [strpaymenturl, setStrPaymentUrl] = useState("")
-  //const [currentUrl, setCurrentUrl] = useState("");
- // const [reqHash , setreqHash ] = useState("")
-  //console.log("DATA " + data);
+ 
   const reqparams: any = data;
   const requestdata: any = JSON.parse(reqparams);
   useEffect(() => {
@@ -39,20 +37,20 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
       "|" + requestdata.currency + "";
       const hash = CryptoJS.SHA256(txn_details).toString(CryptoJS.enc.Hex);
     console.log('SHA-256 Hash:', hash);
-    let devicejson ={};
+    //let devicejson ={};
     let appName = DeviceInfo.getSystemName();
     console.log("appName : "+appName);
-      devicejson = {
-                             'pluginName': "React Native ",
-                             'pluginVersion': '1.0.0',
-                             'pluginPlatform': DeviceInfo.getDeviceType(),
-                             'deviceModel': DeviceInfo.getModel(),
-                             'devicePlatform': DeviceInfo.getSystemName(),
-                             'deviceOSVersion': DeviceInfo.getSystemVersion(),
-                   };
+      // devicejson = {
+      //                        'pluginName': "React Native ",
+      //                        'pluginVersion': '1.0.0',
+      //                        'pluginPlatform': DeviceInfo.getDeviceType(),
+      //                        'deviceModel': DeviceInfo.getModel(),
+      //                        'devicePlatform': DeviceInfo.getSystemName(),
+      //                        'deviceOSVersion': DeviceInfo.getSystemVersion(),
+      //              };
 
   console.log("signature", hash);
-  const json_devicedata = JSON.stringify(devicejson);
+ // const json_devicedata = JSON.stringify(devicejson);
       const paymentRequest = {
         terminalId: requestdata.terminalId,
         paymentType: requestdata.action,
@@ -78,14 +76,18 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
         },
         country:requestdata.country,
         tokenization: {
-        "cardToken": "",
+        "cardToken": requestdata.cardtoken,
         "operation": requestdata.tokenizationType
     },
+    "paymentInstrument": {
+      "paymentMethod": "CCI"
+  },
+  
     additionalDetails: {
       'userData': requestdata.metadata
       
     },
-    'deviceInfo' : json_devicedata
+    //'deviceInfo' : json_devicedata
       };
 
       console.log("  REQUEST "+JSON.stringify(paymentRequest))
@@ -105,6 +107,9 @@ let requrl = requestdata.requestUrl
          setPaymentResult(result);
       } catch (e) {
         console.log('Something went wrong while sending the request');
+
+
+        Alert.alert('Something went wrong while sending the request');
       } finally {
         setLoading(false); // Set loading to false after the request completes
       }
@@ -206,9 +211,7 @@ useEffect(() => {
            const decodedString = decodeURIComponent(data1);
             console.log('Decoded String:', decodedString);
 
-            // let data123 =
-            // 'StWTroAjr/0PZYMM1bDoFn60i833Xws27bNws++fjZbbw+Yf/7xpF8HqA3t1BxqOoOD/HSYTvpxqrE59NPE1fB6E1lNo8GTaLX4x+u2YVrcH7VeQ0/jObUtAKI67YVXikCcp64K+Ys+EllpYuha8/nMeLEbGjWDLT+a7jVIBr9SRFZkwUNGi8US3dRKLi9SK5oSuIRw4axokM+XiEcQx0cVrDM41HBcDR/5hX61mWTtcr5tmrHLl7UMptcfhUZwFf/5Z/G8iB7Ju5d5oN35vMc0Lf/3GZxTHpx5vMqRWfRyx7dYO21UXneIjwH41l8xEcTDEOPIGnvXmpC+V13IoqbZH/PNl5CEMtRsX7Mmri+XaMKw6Ic3YiJPsme9BRHkfyb46Qu151rDwbYfcuSwvpKxEX/XTJ/6cWc1nid+AgqgKCdiC1viRZKhOHef7+nH0NBkleAMX8eOdBhJc2JYTHoS9mxkinLsewPtyNuiYVUkItZa8B6ZXh1FTMLVnUe/Rw28uEbuLsIGm6i5v7l4THQBa/7j+AZGuz9PIH68/uPIGFsKOLKQeY4jwiYNknw+YH8aiIUvsbxt3Q30LFJseOmAU9zTjHHVjFW//pIVTkwyfenpa8uNyuoUwNGBQlcrBoxNGHSLPYR/pGmz3qtvAxF/ZCdz1xEHIFEownpt1YXvbS/ROfCP4E5ZO5h57PB05pfAXNnGGW8GguBtXiiywMIUMZ0nV32H2EtbQnGN93k7kJEI9L1v61h+24V/XrPdmzSzu3VlHPStgY/2H0vM6/rSRPHdX9C65+0tNzOfVaLOVbC7UJwWVVVB8Oo06r5ti1Cm9nZzWwiFqT80c75Lh0I05BhyrEHCPyslMndaMBBGgd/N+DtTTDrjK+qmRRFbs';
-             const secretKey = requestdata.merchantkey;
+              const secretKey = requestdata.merchantkey;
               console.log("Merchant Data "+decodedString)
               const result = decryptAES256ECB(decodedString, secretKey);
               console.log("FINAL RESPONSE " + result);
