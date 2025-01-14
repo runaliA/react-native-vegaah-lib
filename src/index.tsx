@@ -25,6 +25,28 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
  
   const reqparams: any = data;
   const requestdata: any = JSON.parse(reqparams);
+
+const [publicIp,setpublicIp] = useState("");
+//const [deviceInfo,setDeviceInfo] = useState("");
+
+
+useEffect(() => {
+  const fetchPublicIp = async () => {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const result = await response.json();
+      console.log("Public IP:", result.ip);
+      setpublicIp(result.ip);
+    } catch (e) {
+      console.log('Something went wrong while fetching the public IP');
+    }
+  };
+
+  fetchPublicIp();
+
+
+},[]); 
+
   useEffect(() => {
     const fetchPayment = async () => {
       //const varcurrency = 'SAR';
@@ -37,37 +59,70 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
       "|" + requestdata.currency + "";
       const hash = CryptoJS.SHA256(txn_details).toString(CryptoJS.enc.Hex);
     console.log('SHA-256 Hash:', hash);
-    //let devicejson ={};
-    let appName = DeviceInfo.getSystemName();
+   // let devicejson ={};
+    const appName = DeviceInfo.getSystemName();
     console.log("appName : "+appName);
-      // devicejson = {
-      //                        'pluginName': "React Native ",
-      //                        'pluginVersion': '1.0.0',
-      //                        'pluginPlatform': DeviceInfo.getDeviceType(),
-      //                        'deviceModel': DeviceInfo.getModel(),
-      //                        'devicePlatform': DeviceInfo.getSystemName(),
-      //                        'deviceOSVersion': DeviceInfo.getSystemVersion(),
-      //              };
 
+    const validatePaymentRequest = (paymentRequest: any) => {
+      console.log("In validatePaymentRequest" + JSON.stringify(paymentRequest ));
+      if (!paymentRequest) {
+        console.error("Payment request is null or undefined");
+        return false;
+      }
+    
+      else if (!paymentRequest.amount || paymentRequest.amount <= 0) {
+        console.error("Invalid payment amount");
+        return false;
+      }
+    
+     else if (!paymentRequest.currency) {
+        console.error("Currency is required");
+        return false;
+      }
+      else if (!paymentRequest.paymentType)
+{
+  Alert.alert('Error', 'Payment Type is required');
+  return false;
+}    
+      // Add more validations as needed
+      return true;
+    };
+
+    const handlePayment = (paymentRequest: any) => {
+      if (validatePaymentRequest(paymentRequest)) {
+        // Proceed with payment processing
+        console.log("Payment request is valid");
+      } else {
+        // Handle invalid payment request
+        Alert.alert('Error', 'Payment Request is invalid');
+        if(showWebView)
+          {
+        // Send the result back to the parent app
+        onClose("Payment Request is invalid");
+        // Hide WebView after sending result
+        setShowWebView(false);
+          }
+      }
+    };
   console.log("signature", hash);
  // const json_devicedata = JSON.stringify(devicejson);
       const paymentRequest = {
         terminalId: requestdata.terminalId,
         paymentType: requestdata.action,
-        merchantIp: '10.10.10.10',
+        merchantIp:publicIp || '0.0.0.0',
         password: requestdata.password,
         amount: requestdata.amount,
         signature: hash,
         customer: {
           "customerEmail": requestdata.email,
-          "billingAddressStreet":"Ghatkopar",
+          "billingAddressStreet":requestdata.city,
           "billingAddressCity": requestdata.city,
           "billingAddressState": requestdata.state,
           "billingAddressPostalCode": requestdata.zipcode,
           "billingAddressCountry": requestdata.country
       },
         currency: requestdata.currency,
-        customerIp: '10.10.10.10',
+        customerIp: publicIp || '0.0.0.0',
         referenceId : requestdata.transactionId,
         applepayId: 'applepay',
         order: {
@@ -87,9 +142,18 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
       'userData': requestdata.metadata
       
     },
-    //'deviceInfo' : json_devicedata
+    'deviceInfo' : {
+
+      'pluginName': "React Native ",
+      'pluginVersion': '3.0.3',
+      'pluginPlatform': DeviceInfo.getDeviceType(),
+      'deviceModel': DeviceInfo.getModel(),
+      'devicePlatform': appName,
+    }
       };
 
+      handlePayment(paymentRequest);
+      
       console.log("  REQUEST "+JSON.stringify(paymentRequest))
 let requrl = requestdata.requestUrl
       try {
