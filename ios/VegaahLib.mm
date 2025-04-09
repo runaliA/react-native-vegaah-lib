@@ -1,14 +1,8 @@
-#import <React/RCTBridgeModule.h>
+#import <Foundation/Foundation.h>
+#import "React/RCTBridgeModule.h"
 
-@interface RCT_EXTERN_MODULE(VegaahLib, NSObject)
+@interface RCT_EXTERN_MODULE(Applepay,NSObject)
 
-RCT_EXTERN_METHOD(multiply:(float)a withB:(float)b
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
-
-+ (BOOL)requiresMainQueueSetup
-{
-  return NO;
-}
+RCT_EXTERN_METHOD(createApplePayToken:(NSString *)merchantIdentfier amount:(NSString *) amount label:(NSString *) label callback: (RCTResponseSenderBlock)callback)
 
 @end

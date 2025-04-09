@@ -3,8 +3,10 @@ import {
   StyleSheet,
   View,  SafeAreaView,Text,Alert
 } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 
+const { Applepay } = NativeModules;
 // import CustomWebView from './CustomWebView';
 import WebView from 'react-native-webview';
 import React, { useEffect, useState } from 'react';
@@ -27,7 +29,7 @@ const HostedPlugin: React.FC<HostedPluginProps>   = ({ data, onClose }) => {
   const requestdata: any = JSON.parse(reqparams);
 
 const [publicIp,setpublicIp] = useState("");
-//const [deviceInfo,setDeviceInfo] = useState("");
+const [ispublicipfetched,setIsPublicIpFetched] = useState(false);
 
 
 useEffect(() => {
@@ -35,19 +37,29 @@ useEffect(() => {
     try {
       const response = await fetch('https://api.ipify.org?format=json');
       const result = await response.json();
-      console.log("Public IP:", result.ip);
+      console.log("Public IP in own method:", result.ip);
       setpublicIp(result.ip);
+      setIsPublicIpFetched(true);
     } catch (e) {
       console.log('Something went wrong while fetching the public IP');
     }
   };
 
   fetchPublicIp();
-
-
 },[]); 
 
   useEffect(() => {
+    if(ispublicipfetched)
+    {
+      console.log("Public IP in useEffect:", publicIp);
+      fetchPayment();
+    }
+  }, [publicIp,ispublicipfetched]);
+
+
+
+
+ // useEffect(() => {
     const fetchPayment = async () => {
       //const varcurrency = 'SAR';
       //const amount = '1';
@@ -88,7 +100,10 @@ useEffect(() => {
       return true;
     };
 
+   
+  
     const handlePayment = (paymentRequest: any) => {
+
       if (validatePaymentRequest(paymentRequest)) {
         // Proceed with payment processing
         console.log("Payment request is valid");
@@ -105,6 +120,7 @@ useEffect(() => {
       }
     };
   console.log("signature", hash);
+  console.log("Public IP  method:", publicIp);
  // const json_devicedata = JSON.stringify(devicejson);
       const paymentRequest = {
         terminalId: requestdata.terminalId,
@@ -155,7 +171,7 @@ useEffect(() => {
       handlePayment(paymentRequest);
       
       console.log("  REQUEST "+JSON.stringify(paymentRequest))
-let requrl = requestdata.requestUrl
+      let requrl = requestdata.requestUrl
       try {
         const response = await fetch(requrl, {
           method: 'POST',
@@ -179,8 +195,8 @@ let requrl = requestdata.requestUrl
       }
     };
 
-    fetchPayment();
-  }, [data]);
+  //   fetchPayment();
+  // }, [data]);
 
 // Once we have the API result, call the onClose callback and hide the WebView
 useEffect(() => {
@@ -194,7 +210,7 @@ useEffect(() => {
       const transactionId = dataRequest.transactionId;
       console.log(linkUrl+transactionId);
       setStrPaymentUrl(linkUrl+transactionId)
-      console.log("Link URL:", linkUrl);               // Output: Link URL: http://10.10.11.66:7070/vegaahpayments/direct.htm?paymentId=
+      console.log("Link URL:", linkUrl);              
       console.log("Transaction ID:", transactionId);
     }
     else
@@ -222,13 +238,14 @@ useEffect(() => {
         
       </View>
      {showWebView && ( <View style={styles.btnContainer}>
-        <WebView
+        <WebView 
+
         originWhitelist={['*']} 
           source={{ uri: strpaymenturl }}
           javaScriptEnabled={true}
           domStorageEnabled={true}
      
-          style={{ flex: 1 }}
+          style={{ flex: 1,height: '100%', width: '100%' }}
           mixedContentMode="always" 
           onLoadStart={() => console.log('WebView load started')}
           onError={(syntheticEvent) => {
@@ -351,4 +368,60 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HostedPlugin;
+const ApplePayComponent: React.FC<HostedPluginProps> = ({ data, onClose }) => {
+  useEffect(() => {
+
+    //First create Applepay session
+
+    const processApplePay = async () => {
+      Alert.alert('Apple Pay Amount ', JSON.stringify(data));
+      if (Platform.OS === 'android') {
+        throw new Error('Apple Pay is not supported on Android devices');
+      }
+      Applepay.createApplePayToken("merchantIdentifier", String("amount"), "label", async (err: any , token : any) => {
+        if (err) {
+          Alert.alert('Error', `${err}`, [{
+            text: 'ok',
+            style: 'default'
+          }]);
+          onClose(err);
+        }
+        else {
+          Alert.alert('Apple Pay Token', `${token}`, [{
+            text: 'ok',
+            style: 'default'
+          }]);
+          onClose(token); // Send the API response back to the parent
+        }
+      
+       
+      });
+      // try {
+      //   const requestData = JSON.parse(data || '{}');
+      //   const response = await fetch('https://your-api-endpoint.com/applepay', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify(requestData),
+      //   });
+
+      //   if (!response.ok) {
+      //     throw new Error('Network response was not ok');
+      //   }
+
+      //   const result = await response.json();
+      //   onClose(result); // Send the API response back to the parent
+      // } catch (error) {
+      //   console.error('Error processing Apple Pay:', error);
+      //   Alert.alert('Error', 'Failed to process Apple Pay');
+      //   onClose({ error: 'Failed to process Apple Pay' }); // Send the error back to the parent
+     // }
+    };
+
+    processApplePay();
+  }, [data, onClose]);
+
+  return null; // No UI to render
+};
+export { HostedPlugin, ApplePayComponent };
