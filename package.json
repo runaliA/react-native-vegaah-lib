@@ -42,7 +42,7 @@
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-   
+    "prepare": "bob build",
     "release": "release-it"
   },
   "keywords": [
@@ -81,6 +81,7 @@
     "prettier": "^3.0.3",
     "react": "19.1.1",
     "react-native": "0.81.4",
+    "react-native-builder-bob": "^0.20.0",
     "release-it": "^19.0.4",
     "turbo": "^2.5.6",
     "typescript": "^5.9.2"
@@ -189,7 +190,6 @@
   "dependencies": {
     "crypto-js": "^4.2.0",
     "query-string": "^9.1.1",
-    "react-native-builder-bob": "^0.40.1",
     "react-native-device-info": "^14.0.4",
     "react-native-webview": "^13.13.5"
   }
